@@ -25,8 +25,10 @@ var firstTrainTime = 0;
 var frequency = 0;
 
 //Moment API
-var tFrequencey = $('.frequency').val().trim();
-var firstTime = $('.time-start').val().trim();
+var tFrequencey = $('.frequency').text().trim();
+console.log(tFrequencey);
+var firstTime = $('.time-start').text().trim();
+console.log(firstTime);
 //First Time (Pushing back 1 year to make sure it comes before current time)
 var firstTimeConverted = moment(firstTime, 'HH:mm').subtract(1, 'years');
 console.log(firstTimeConverted);
@@ -48,9 +50,7 @@ console.log('Arrival Time: ' + moment(nextTrain).format('HH:mm'));
 //Now display next train arrival and minutes away
 $('.next-train').html(nextTrain.format('HH:mm'));
 $('.minutes-away').html(tMinutesTillTrain);
-//Sweet! Now lets add a new train to the list, using the "Add Train" section
 //Site is not auto updating. Need to add a listener somewhere
-//When Firebase is added, information for next train and minutes until next train are not visible on page
 
 //Submit Button
 $('#submit').on('click', function (event) {
@@ -90,3 +90,5 @@ dataRef.ref().orderByChild('dateAdded').on('child_added', function (childSnapsho
 }, function (errorObject) {
     console.log("Errors handled: " + errorObject.code);
 });
+
+//setInterval function to replace tMinutesToTrain. Build time interval to update minutes away every 60 seconds
