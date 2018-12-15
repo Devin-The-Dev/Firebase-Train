@@ -18,10 +18,15 @@ var config = {
     messagingSenderId: "127536845307"
 };
 firebase.initializeApp(config);
+var dataRef = firebase.database();
+var trainName = '';
+var destination = '';
+var firstTrainTime = 0;
+var frequency = 0;
 
 //Moment API
-var tFrequencey = 15;
-var firstTime = '5:00';
+var tFrequencey = $('.frequency').val().trim();
+var firstTime = $('.time-start').val().trim();
 //First Time (Pushing back 1 year to make sure it comes before current time)
 var firstTimeConverted = moment(firstTime, 'HH:mm').subtract(1, 'years');
 console.log(firstTimeConverted);
@@ -41,10 +46,47 @@ console.log('Minutes till Train: ' + tMinutesTillTrain);
 var nextTrain = moment().add(tMinutesTillTrain, 'minutes');
 console.log('Arrival Time: ' + moment(nextTrain).format('HH:mm'));
 //Now display next train arrival and minutes away
-$('#next-train').html(nextTrain.format('HH:mm'));
-$('#minutes-away').html(tMinutesTillTrain);
+$('.next-train').html(nextTrain.format('HH:mm'));
+$('.minutes-away').html(tMinutesTillTrain);
 //Sweet! Now lets add a new train to the list, using the "Add Train" section
 //Site is not auto updating. Need to add a listener somewhere
 //When Firebase is added, information for next train and minutes until next train are not visible on page
-$('#next-train').append();
-$('#minutes-away').append();
+
+//Submit Button
+$('#submit').on('click', function (event) {
+    event.preventDefault();
+    trainName = $('#add-train').val().trim();
+    destination = $('#add-destination').val().trim();
+    firstTrainTime = $('#add-time-start').val().trim();
+    frequency = $('#add-frequency').val().trim();
+
+    //Now push the code to the database
+    dataRef.ref().push({
+        trainName: trainName,
+        destination: destination,
+        firstTrainTime: firstTrainTime,
+        frequency: frequency,
+        nextTrain: nextTrain.format("HH:mm"),
+        tMinutesTillTrain: tMinutesTillTrain
+    });
+    console.log(nextTrain);
+    console.log(tMinutesTillTrain);
+});
+
+dataRef.ref().orderByChild('dateAdded').on('child_added', function (childSnapshot) {
+    console.log(childSnapshot.val().trainName);
+    console.log(childSnapshot.val().destination);
+    console.log(childSnapshot.val().firstTrainTime);
+    console.log(childSnapshot.val().frequency);
+    $('#schedule').append("<tr><td class = 'train'>" +
+        childSnapshot.val().trainName +
+        "</td><td class = 'destination'>" + childSnapshot.val().destination +
+        "</td><td class = 'time-start'>" + childSnapshot.val().firstTrainTime +
+        "</td><td class = 'frequency'>" + childSnapshot.val().frequency +
+        "</td><td class = 'next-train'>" + childSnapshot.val().nextTrain +
+        "</td><td class = 'minutes-away'>" + childSnapshot.val().tMinutesTillTrain +
+        "</td></tr>");
+    //Handle the errors
+}, function (errorObject) {
+    console.log("Errors handled: " + errorObject.code);
+});
