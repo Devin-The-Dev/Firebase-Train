@@ -18,6 +18,7 @@ var config = {
     messagingSenderId: "127536845307"
 };
 firebase.initializeApp(config);
+
 var dataRef = firebase.database();
 var trainName = '';
 var destination = '';
