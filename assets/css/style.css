@@ -1,0 +1,22 @@
+body {
+    background: url(../images/jumbotron.jpeg) whitesmoke;
+    background-size: cover;
+    background-repeat: none;
+}
+
+.jumbotron, .card-header {
+    text-align: center;
+}
+
+.jumbotron, .card{
+    opacity: .8;
+    background: whitesmoke;
+}
+
+.list {
+    margin-bottom: 3vw;
+}
+
+.additions {
+    opacity: 1;
+}
